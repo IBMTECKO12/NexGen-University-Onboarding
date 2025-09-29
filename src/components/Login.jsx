@@ -49,7 +49,7 @@ const Login = () => {
         <div className="text-lg font-semibold text-slate-900">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
           <a href="/register" className="text-slate-700 hover:text-blue-600">Register</a>
-          <a href="/waitlist" className="text-slate-700 hover:text-blue-600">Waitlist</a>
+          {/* <a href="/waitlist" className="text-slate-700 hover:text-blue-600">Waitlist</a> */}
         </nav>
       </header>
       <motion.div
