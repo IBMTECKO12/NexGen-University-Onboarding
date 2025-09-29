@@ -113,9 +113,9 @@ const Register = () => {
             <Button onClick={() => handleSocialRegister(googleProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
               Register with Google
             </Button>
-            <Button onClick={() => handleSocialRegister(facebookProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
+            {/* <Button onClick={() => handleSocialRegister(facebookProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
               Register with Facebook
-            </Button>
+            </Button> */}
           </div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.5 }} className="text-center mt-4">
             Already have an account? <a href="/login" className="text-blue-500">Login</a>

@@ -84,9 +84,9 @@ const Login = () => {
             <Button onClick={() => handleSocialLogin(googleProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
               Login with Google
             </Button>
-            <Button onClick={() => handleSocialLogin(facebookProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
+            {/* <Button onClick={() => handleSocialLogin(facebookProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
               Login with Facebook
-            </Button>
+            </Button> */}
           </div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.5 }} className="text-center mt-4">
             Don't have an account? <a href="/register" className="text-blue-500">Register</a>
