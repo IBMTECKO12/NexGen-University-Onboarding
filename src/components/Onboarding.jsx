@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { addDays } from 'date-fns';
 import { Button, message } from 'antd';
-import { auth } from '../firebase';
+import { auth, logout } from '../firebase'; // ✅ import logout helper
 
 // Placeholder image URL - replace with your own
 const sideImage = './onboarding.jpg';
@@ -13,10 +12,10 @@ const Onboarding = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [name, setName] = useState(location.state?.name || auth.currentUser?.displayName || 'Student');
-  // remaining seconds until endDate
   const [remainingSeconds, setRemainingSeconds] = useState(null);
+
   const startDate = new Date('2025-09-30T00:00:00');
-  const endDate = new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days after startDate
+  const endDate = new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   useEffect(() => {
     const update = () => {
@@ -29,7 +28,6 @@ const Onboarding = () => {
     return () => clearInterval(timer);
   }, [endDate]);
 
-  // helper to format D:HH:MM:SS (days + hours less than 24)
   const formatDHHMMSS = (totalSeconds) => {
     if (totalSeconds == null) return { days: '--', hrs: '--', mins: '--', secs: '--' };
     const days = Math.floor(totalSeconds / 86400);
@@ -40,12 +38,10 @@ const Onboarding = () => {
     return { days: String(days), hrs: pad(hrs), mins: pad(mins), secs: pad(secs) };
   };
 
-  // progress based on full period from startDate->endDate
   const totalPeriodSeconds = Math.max(1, Math.floor((endDate.getTime() - startDate.getTime()) / 1000));
   const elapsedSeconds = remainingSeconds == null ? 0 : Math.max(0, totalPeriodSeconds - remainingSeconds);
   const progress = Math.min(1, elapsedSeconds / totalPeriodSeconds);
 
-  // If no name (e.g., direct access), redirect to waitlist or login
   useEffect(() => {
     if (!name) {
       message.info('Please join the waitlist or login to access onboarding.');
@@ -53,28 +49,42 @@ const Onboarding = () => {
     }
   }, [name, navigate]);
 
-  // motion variants for digit pop animation
   const digitVariants = {
     initial: { y: -6, opacity: 0, scale: 0.96 },
     animate: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.26, ease: 'easeOut' } }
   };
 
-  // small glow style (Tailwind doesn't support this exact shadow token by default in all setups)
   const glowClass = 'shadow-[0_10px_30px_rgba(59,130,246,0.16)]';
+
+  // ✅ Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success('You have logged out successfully.');
+      navigate('/login');
+    } catch (error) {
+      message.error(error.message || 'Failed to log out.');
+    }
+  };
 
   return (
     <div className="flex min-h-screen pt-20">
-      {/* Top header - brand logo + name */}
+      {/* Top header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur z-30 shadow-sm flex items-center px-6">
         <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
         <div className="text-lg md:text-xl font-semibold text-slate-900">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          {/* <a href="/waitlist" className="text-slate-700 hover:text-blue-600">Waitlist</a> */}
           <a href="/onboarding" className="text-slate-700 hover:text-blue-600">Onboarding</a>
-          <a href="/login" className="text-slate-700 hover:text-red-600">Log Out</a>
+          <button 
+            onClick={handleLogout} 
+            className="text-slate-700 hover:text-red-600 transition-colors"
+          >
+            Log Out
+          </button>
         </nav>
       </header>
 
+      {/* Main content */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -90,6 +100,7 @@ const Onboarding = () => {
           >
             Welcome to Onboarding, {name}!
           </motion.h2>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -99,7 +110,7 @@ const Onboarding = () => {
             Your journey starts soon. Countdown to launch:
           </motion.p>
 
-          {/* Modern blue/dark-blue themed countdown card */}
+          {/* Countdown card */}
           <motion.div
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -138,7 +149,7 @@ const Onboarding = () => {
               })()}
             </div>
 
-            {/* progress bar with blue gradient */}
+            {/* Progress bar */}
             <div className="mt-5">
               <div className="w-full h-2 bg-white/8 rounded-full overflow-hidden">
                 <motion.div
@@ -155,8 +166,13 @@ const Onboarding = () => {
           <Button type="primary" size="large" onClick={() => navigate('/login')}>
             Proceed to Dashboard
           </Button>
-          {/* Add basic needs: e.g., links to resources */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.5 }} className="mt-8">
+
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ delay: 0.5, duration: 0.5 }} 
+            className="mt-8"
+          >
             <p className="text-gray-600">Useful Links:</p>
             <ul className="list-disc list-inside">
               <li><a href="#" className="text-blue-500">Orientation Guide</a></li>
@@ -166,6 +182,8 @@ const Onboarding = () => {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Right-side image */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}

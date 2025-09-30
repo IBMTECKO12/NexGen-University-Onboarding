@@ -19,27 +19,49 @@ const Register = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    setLoading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-      await updateProfile(user, { displayName: values.name });
-      await sendEmailVerification(user);
-      // Store additional info in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        name: values.name,
-        email: values.email,
-        program: values.program,
-        createdAt: serverTimestamp(),
-      });
-      message.success('Registration successful! Verification email sent.');
+  setLoading(true);
+
+  // Set a max loading timeout (5s)
+  const timeout = setTimeout(() => setLoading(false), 5000);
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+    const user = userCredential.user;
+
+    await updateProfile(user, { displayName: values.name });
+    await sendEmailVerification(user);
+
+    // Store additional info in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      name: values.name,
+      email: values.email,
+      program: values.program,
+      createdAt: serverTimestamp(),
+    });
+
+    // Show success message for 5s
+    message.success({
+      content: 'Registration successful! Verification email sent.',
+      duration: 5,
+    });
+
+    // Redirect to login after 5s
+    setTimeout(() => {
       navigate('/login');
-    } catch (error) {
-      message.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    }, 5000);
+
+  } catch (error) {
+    // Show error popup for 5s
+    message.error({
+      content: error.message,
+      duration: 5,
+    });
+  } finally {
+    clearTimeout(timeout); // prevent double reset
+    setLoading(false);
+  }
+};
+
 
   const handleSocialRegister = async (provider) => {
     setLoading(true);

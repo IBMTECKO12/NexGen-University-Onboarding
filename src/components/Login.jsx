@@ -1,4 +1,4 @@
-// components/Login.js
+// components/Login.js 
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { motion } from 'framer-motion';
@@ -17,12 +17,45 @@ const Login = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
+
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      message.success('Login successful!');
-      navigate('/onboarding'); // Redirect to onboarding after login
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        message.warning({
+          content: 'Email not verified. Please check your inbox.',
+          duration: 5,
+        });
+        return;
+      }
+
+      message.success({
+        content: 'Login successful!',
+        duration: 5,
+      });
+
+      // Redirect after 5s
+      setTimeout(() => {
+        navigate('/onboarding');
+      }, 5000);
+
     } catch (error) {
-      message.error(error.message);
+      // Handle specific errors
+      let errorMsg = 'Login failed. Please try again.';
+
+      if (error.code === 'auth/user-not-found') {
+        errorMsg = 'No user found with this email.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMsg = 'Incorrect password. Please try again.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMsg = 'Invalid email address.';
+      }
+
+      message.error({
+        content: errorMsg,
+        duration: 5,
+      });
     } finally {
       setLoading(false);
     }
@@ -32,10 +65,20 @@ const Login = () => {
     setLoading(true);
     try {
       const user = await signInWithSocial(provider);
-      message.success(`Logged in as ${user.displayName}`);
-      navigate('/onboarding');
+      message.success({
+        content: `Logged in as ${user.displayName}`,
+        duration: 5,
+      });
+
+      setTimeout(() => {
+        navigate('/onboarding');
+      }, 5000);
+
     } catch (error) {
-      message.error(error.message);
+      message.error({
+        content: error.message,
+        duration: 5,
+      });
     } finally {
       setLoading(false);
     }
@@ -49,7 +92,6 @@ const Login = () => {
         <div className="text-lg font-semibold text-slate-900">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
           <a href="/register" className="text-slate-700 hover:text-blue-600">Register</a>
-          {/* <a href="/waitlist" className="text-slate-700 hover:text-blue-600">Waitlist</a> */}
         </nav>
       </header>
       <motion.div
@@ -91,9 +133,6 @@ const Login = () => {
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.5 }} className="text-center mt-4">
             Don't have an account? <a href="/register" className="text-blue-500">Register</a>
           </motion.p>
-          {/* <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.5 }} className="text-center mt-2">
-            Join the <a href="/waitlist" className="text-blue-500">Waitlist</a> for updates
-          </motion.p> */}
         </div>
       </motion.div>
       <motion.div
