@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, message } from 'antd';
-import { auth, logout } from '../firebase'; // ✅ import logout helper
-
+import { auth, logout } from '../firebase';
+import { WhatsAppOutlined, SendOutlined } from '@ant-design/icons';
 
 // Placeholder image URL - replace with your own
 const sideImage = './onboarding.jpg';
 const logo = './NEXGENU.png'; // <-- replace with your logo file/path
+
+// Replace with your actual group links
+const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/KXqYxYvuk1g45maj5caJro?mode=ems_wa_t';
+const TELEGRAM_GROUP_LINK = 'https://t.me/+lTmNsF5i6TM5NmQ0';
 
 const Onboarding = () => {
   const location = useLocation();
@@ -55,9 +59,9 @@ const Onboarding = () => {
     animate: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.26, ease: 'easeOut' } }
   };
 
-  const glowClass = 'shadow-[0_10px_30px_rgba(59,130,246,0.16)]';
+  const glowClass = 'shadow-[0_10px_30px_rgba(43,73,84,0.2)]'; // Updated to use tertiary1 shadow
 
-  // ✅ Handle logout
+  // Handle logout
   const handleLogout = async () => {
     try {
       await logout();
@@ -68,17 +72,26 @@ const Onboarding = () => {
     }
   };
 
+  // Handle group link redirects
+  const handleJoinWhatsApp = () => {
+    window.open(WHATSAPP_GROUP_LINK, '_blank');
+  };
+
+  const handleJoinTelegram = () => {
+    window.open(TELEGRAM_GROUP_LINK, '_blank');
+  };
+
   return (
-    <div className="flex min-h-screen pt-20">
+    <div className="flex min-h-screen pt-20 bg-tertiary1 font-nohemi">
       {/* Top header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur z-30 shadow-sm flex items-center px-6">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-primary/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
         <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
-        <div className="text-lg md:text-xl font-semibold text-slate-900">NexGen University</div>
+        <div className="text-lg md:text-xl font-bold text-secondary">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          <a href="/onboarding" className="text-slate-700 hover:text-blue-600">Onboarding</a>
+          <a href="/onboarding" className="text-secondary hover:text-tertiary2">Onboarding</a>
           <button 
             onClick={handleLogout} 
-            className="text-slate-700 hover:text-red-600 transition-colors"
+            className="text-secondary hover:text-red-600 transition-colors"
           >
             Log Out
           </button>
@@ -97,7 +110,7 @@ const Onboarding = () => {
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-3xl font-bold mb-6 text-gray-800"
+            className="text-3xl font-bold mb-6 text-primary"
           >
             Welcome to Onboarding, {name}!
           </motion.h2>
@@ -116,7 +129,7 @@ const Onboarding = () => {
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.28, duration: 0.45, type: 'spring', stiffness: 140 }}
-            className={`mb-6 p-6 rounded-3xl ${glowClass} bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 text-white ring-1 ring-white/6`}
+            className={`mb-6 p-6 rounded-3xl ${glowClass} bg-gradient-to-br from-primary via-tertiary1 to-tertiary2 text-white ring-1 ring-secondary/30`}
           >
             <div className="flex items-center justify-center gap-4">
               {(() => {
@@ -128,22 +141,22 @@ const Onboarding = () => {
                       variants={digitVariants}
                       initial="initial"
                       animate="animate"
-                      className="bg-white/6 backdrop-blur-sm border border-white/8 rounded-xl min-w-[32px] flex items-center justify-center"
+                      className="bg-white/10 backdrop-blur-sm border border-secondary/20 rounded-xl min-w-[32px] flex items-center justify-center"
                     >
-                      <span className={`text-4xl md:text-5xl font-mono font-semibold tracking-tight ${padClass}`}>{value}</span>
+                      <span className={`text-4xl md:text-5xl font-nohemi font-bold tracking-tight ${padClass}`}>{value}</span>
                     </motion.div>
-                    <div className="text-[11px] mt-2 uppercase opacity-75">{label}</div>
+                    <div className="text-[11px] mt-2 uppercase text-secondary/75">{label}</div>
                   </div>
                 );
 
                 return (
                   <>
                     {unit(days, 'Days', 'text-2xl')}
-                    <div className="text-3xl font-mono font-semibold opacity-90">:</div>
+                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
                     {unit(hrs, 'Hours')}
-                    <div className="text-3xl font-mono font-semibold opacity-90">:</div>
+                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
                     {unit(mins, 'Minutes')}
-                    <div className="text-3xl font-mono font-semibold opacity-90">:</div>
+                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
                     {unit(secs, 'Seconds')}
                   </>
                 );
@@ -152,21 +165,37 @@ const Onboarding = () => {
 
             {/* Progress bar */}
             <div className="mt-5">
-              <div className="w-full h-2 bg-white/8 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.max(0, Math.round(progress * 100))}%` }}
                   transition={{ duration: 0.7, ease: 'easeOut' }}
-                  className="h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500"
+                  className="h-2 bg-secondary"
                 />
               </div>
-              <div className="text-xs mt-2 opacity-80 text-white/90">{Math.round(progress * 100)}% complete</div>
+              <div className="text-xs mt-2 text-secondary/90">{Math.round(progress * 100)}% complete</div>
             </div>
           </motion.div>
 
-          <Button type="primary" size="large" onClick={() => navigate('/login')}>
-            Proceed to Dashboard
-          </Button>
+          {/* WhatsApp and Telegram Buttons */}
+          <div className="flex flex-col space-y-3 mb-6">
+            <Button
+              size="large"
+              onClick={handleJoinWhatsApp}
+              className="bg-primary hover:bg-tertiary1 text-white border-none flex items-center justify-center font-nohemi"
+              icon={<WhatsAppOutlined />}
+            >
+              Join WhatsApp Group
+            </Button>
+            <Button
+              size="large"
+              onClick={handleJoinTelegram}
+              className="bg-primary hover:bg-tertiary1 text-white border-none flex items-center justify-center font-nohemi"
+              icon={<SendOutlined />}
+            >
+              Join Telegram Group
+            </Button>
+          </div>
 
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -174,11 +203,11 @@ const Onboarding = () => {
             transition={{ delay: 0.5, duration: 0.5 }} 
             className="mt-8"
           >
-            <p className="text-gray-600">Useful Links:</p>
+            <p className="text-primary">Useful Links:</p>
             <ul className="list-disc list-inside">
-              <li><a href="#" className="text-blue-500">Orientation Guide</a></li>
-              <li><a href="#" className="text-blue-500">Course Catalog</a></li>
-              <li><a href="#" className="text-blue-500">Support Center</a></li>
+              <li><a href="#" className="text-tertiary2 hover:text-secondary">Orientation Guide</a></li>
+              <li><a href="#" className="text-tertiary2 hover:text-secondary">Course Catalog</a></li>
+              <li><a href="#" className="text-tertiary2 hover:text-secondary">Support Center</a></li>
             </ul>
           </motion.div>
         </div>
@@ -189,7 +218,7 @@ const Onboarding = () => {
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="hidden md:flex flex-1"
+        className="hidden md:flex flex-1 bg-tertiary1"
       >
         <img src={sideImage} alt="Onboarding Image" className="object-cover w-full h-full" loading="lazy" />
       </motion.div>

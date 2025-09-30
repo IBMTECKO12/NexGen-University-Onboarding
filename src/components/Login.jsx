@@ -12,17 +12,15 @@ const logo = './NEXGENU.png'; // <-- replace with your logo file/path
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // For forgot password modal
-  const [resetEmail, setResetEmail] = useState(''); // For reset email input
-  const [resetLoading, setResetLoading] = useState(false); // For reset button loading
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
 
   // Handle email/password login
   const onFinish = async (values) => {
     setLoading(true);
     setErrorMessage(null);
-    setSuccessMessage(null);
     try {
       const user = await loginUser(values.email, values.password);
 
@@ -33,7 +31,6 @@ const Login = () => {
       }
 
       message.success('Login successful! Redirecting...');
-      setSuccessMessage('Login successful! Redirecting...');
       setTimeout(() => navigate('/onboarding'), 3000);
 
     } catch (error) {
@@ -98,13 +95,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen pt-20">
+    <div className="flex min-h-screen pt-20 bg-tertiary1 font-nohemi">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-primary/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
         <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
-        <div className="text-lg font-semibold text-slate-900">NexGen University</div>
+        <div className="text-lg font-bold text-secondary">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          <a href="/register" className="text-slate-700 hover:text-blue-600">Register</a>
+          <a href="/register" className="text-secondary hover:text-tertiary2">Register</a>
         </nav>
       </header>
 
@@ -119,7 +116,7 @@ const Login = () => {
           <motion.h2
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-3xl font-bold mb-6 text-center text-gray-800"
+            className="text-3xl font-bold mb-6 text-center text-primary"
           >
             Login to NexGen University
           </motion.h2>
@@ -136,34 +133,22 @@ const Login = () => {
             </motion.div>
           )}
 
-            {/* Success Message Display */}
-            {successMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mb-4 text-green-500 text-center bg-green-50 p-3 rounded-md"
-            >
-              {successMessage}
-            </motion.div>
-          )}
-
           <Form name="login" onFinish={onFinish} layout="vertical">
             <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
-              <Input prefix={<UserOutlined />} placeholder="Email" size="large" />
+              <Input prefix={<UserOutlined className="text-primary" />} placeholder="Email" size="large" />
             </Form.Item>
             <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
-              <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+              <Input.Password prefix={<LockOutlined className="text-primary" />} placeholder="Password" size="large" />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading} block size="large">
+              <Button type="primary" htmlType="submit" loading={loading} block size="large" className="bg-primary hover:bg-tertiary1">
                 Login with Email
               </Button>
             </Form.Item>
             <Form.Item>
               <a
                 href="#"
-                className="text-blue-500 hover:underline text-sm"
+                className="text-tertiary2 hover:text-secondary text-sm"
                 onClick={(e) => {
                   e.preventDefault();
                   showResetModal();
@@ -182,13 +167,14 @@ const Login = () => {
               block 
               size="large" 
               icon={<GoogleOutlined />}
+              className="bg-primary hover:bg-tertiary1 text-white border-none"
             >
               Login with Google
             </Button>
           </div>
 
-          <motion.p className="text-center mt-4">
-            Don't have an account? <a href="/register" className="text-blue-500">Register</a>
+          <motion.p className="text-center mt-4 text-primary">
+            Don't have an account? <a href="/register" className="text-tertiary2 hover:text-secondary">Register</a>
           </motion.p>
         </div>
       </motion.div>
@@ -199,26 +185,27 @@ const Login = () => {
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={[
-          <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+          <Button key="cancel" onClick={() => setIsModalOpen(false)} className="border-tertiary1 text-primary">
             Cancel
           </Button>,
-          <Button key="submit" type="primary" loading={resetLoading} onClick={handleResetPassword}>
+          <Button key="submit" type="primary" loading={resetLoading} onClick={handleResetPassword} className="bg-primary hover:bg-tertiary1">
             Send Reset Email
           </Button>,
         ]}
+        className="font-nohemi"
       >
-        <p>Enter your email address to receive a password reset link.</p>
+        <p className="text-primary">Enter your email address to receive a password reset link.</p>
         <Input
           placeholder="Email"
           value={resetEmail}
           onChange={(e) => setResetEmail(e.target.value)}
           size="large"
-          prefix={<UserOutlined />}
+          prefix={<UserOutlined className="text-primary" />}
         />
       </Modal>
 
       {/* Image Section */}
-      <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="hidden md:flex flex-1">
+      <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="hidden md:flex flex-1 bg-tertiary1">
         <img src={sideImage} alt="NexGen University" className="object-cover w-full h-full" />
       </motion.div>
     </div>

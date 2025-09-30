@@ -1,1 +1,63 @@
 @import "tailwindcss";
+
+/* Importing Nohemi (assuming hosted or CDN) or fallback to Inter */
+@font-face {
+  font-family: 'Nohemi';
+  src: url('/path/to/Nohemi-Regular.woff2') format('woff2'),
+       url('/path/to/Nohemi-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nohemi';
+  src: url('/path/to/Nohemi-Bold.woff2') format('woff2'),
+       url('/path/to/Nohemi-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Fallback to Google Fonts Inter if Nohemi is unavailable */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+/* Apply Nohemi globally with fallback */
+body, html, * {
+  font-family: 'Nohemi', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Custom styles for Ant Design overrides */
+.ant-btn-primary {
+  background-color: #1b2e34; /* Primary */
+  border-color: #1b2e34;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #2a4954; /* Tertiary 1 */
+  border-color: #2a4954;
+}
+
+.ant-input,
+.ant-select-selector {
+  border-color: #2a4954 !important; /* Tertiary 1 */
+}
+
+.ant-input:hover,
+.ant-select-selector:hover {
+  border-color: #b9fbc2 !important; /* Secondary */
+}
+
+.ant-input:focus,
+.ant-select-selector:focus {
+  border-color: #cfc1fc !important; /* Tertiary 2 */
+  box-shadow: 0 0 0 2px rgba(207, 193, 252, 0.2);
+}
+
+.ant-modal-content {
+  background-color: #fff;
+  border: 1px solid #2a4954; /* Tertiary 1 */
+}
+
+.ant-message-notice-content {
+  font-family: 'Nohemi', 'Inter', sans-serif;
+}
