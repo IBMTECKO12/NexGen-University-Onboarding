@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Placeholder image URL - replace with your own
 const sideImage = './login.jpg';
-const logo = './NEXGENU.png'; // <-- replace with your logo file/path
+const logo = './logo.png'; // <-- replace with your logo file/path
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -95,13 +95,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen pt-20 bg-tertiary1 font-nohemi">
+    <div className="flex min-h-screen pt-20 bg-tertiary1">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-primary/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
-        <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
-        <div className="text-lg font-bold text-secondary">NexGen University</div>
+      <header className="fixed top-0 left-0 right-0 h-16 header backdrop-blur z-30 shadow-sm flex items-center px-6">
+        <img src={logo} alt="NexGen University" className="h-32 w-auto" />
+        <div className="text-lg font-bold header-text">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          <a href="/register" className="text-secondary hover:text-tertiary2">Register</a>
+          <a href="/register" className="nav-link">Register</a>
         </nav>
       </header>
 
@@ -141,7 +141,7 @@ const Login = () => {
               <Input.Password prefix={<LockOutlined className="text-primary" />} placeholder="Password" size="large" />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading} block size="large" className="bg-primary hover:bg-tertiary1">
+              <Button type="primary" htmlType="submit" loading={loading} block size="large">
                 Login with Email
               </Button>
             </Form.Item>
@@ -167,7 +167,9 @@ const Login = () => {
               block 
               size="large" 
               icon={<GoogleOutlined />}
-              className="bg-primary hover:bg-tertiary1 text-white border-none"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', border: 'none' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--tertiary1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
             >
               Login with Google
             </Button>
@@ -185,14 +187,13 @@ const Login = () => {
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={[
-          <Button key="cancel" onClick={() => setIsModalOpen(false)} className="border-tertiary1 text-primary">
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" loading={resetLoading} onClick={handleResetPassword} className="bg-primary hover:bg-tertiary1">
+          <Button key="submit" type="primary" loading={resetLoading} onClick={handleResetPassword}>
             Send Reset Email
           </Button>,
         ]}
-        className="font-nohemi"
       >
         <p className="text-primary">Enter your email address to receive a password reset link.</p>
         <Input

@@ -9,7 +9,7 @@ import {
   sendEmailVerification, 
   updateProfile,
   signOut,
-  sendPasswordResetEmail // Added for forgot password
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -26,14 +26,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-// If your Firestore database is not named '(default)', replace '(default)' with your actual database ID from Firebase Console
-// e.g., export const db = getFirestore(app, 'your-database-name');
-// Otherwise, keep as is
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 export const facebookProvider = new FacebookAuthProvider();
 
-// ✅ Email/password login
+// Email/password login
 export const loginUser = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -43,7 +40,7 @@ export const loginUser = async (email, password) => {
   }
 };
 
-// ✅ Register new user
+// Register new user
 export const registerUser = async (email, password, name) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -69,7 +66,7 @@ export const registerUser = async (email, password, name) => {
   }
 };
 
-// ✅ Social login
+// Social login
 export const signInWithSocial = async (provider) => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -79,7 +76,7 @@ export const signInWithSocial = async (provider) => {
   }
 };
 
-// ✅ Logout
+// Logout
 export const logout = async () => {
   try {
     await signOut(auth);
@@ -88,7 +85,7 @@ export const logout = async () => {
   }
 };
 
-// ✅ Forgot Password
+// Forgot Password
 export const sendPasswordReset = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email);

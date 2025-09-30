@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Placeholder image URL - replace with your own
 const sideImage = './register.jpg';
-const logo = './NEXGENU.png'; // <-- replace with your logo
+const logo = './logo.png'; // <-- replace with your logo
 
 const { Option } = Select;
 
@@ -87,13 +87,13 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen pt-20 bg-tertiary1 font-nohemi">
+    <div className="flex min-h-screen pt-20 bg-tertiary1">
       {/* Top header - brand logo + name */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-primary/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
-        <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
-        <div className="text-lg font-bold text-secondary">NexGen University</div>
+      <header className="fixed top-0 left-0 right-0 h-16 header backdrop-blur z-30 shadow-sm flex items-center px-6">
+        <img src={logo} alt="NexGen University" className="h-32 w-auto" />
+        <div className="text-lg font-bold header-text">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          <a href="/login" className="text-secondary hover:text-tertiary2">Login</a>
+          <a href="/login" className="nav-link">Login</a>
         </nav>
       </header>
 
@@ -131,7 +131,7 @@ const Register = () => {
               </Select>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading} block size="large" className="bg-primary hover:bg-tertiary1">
+              <Button type="primary" htmlType="submit" loading={loading} block size="large">
                 Register with Email
               </Button>
             </Form.Item>
@@ -144,7 +144,9 @@ const Register = () => {
               block 
               size="large" 
               icon={<UserOutlined />}
-              className="bg-primary hover:bg-tertiary1 text-white border-none"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', border: 'none' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--tertiary1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
             >
               Register with Google
             </Button>
@@ -155,7 +157,9 @@ const Register = () => {
               block 
               size="large" 
               icon={<UserOutlined />}
-              className="bg-primary hover:bg-tertiary1 text-white border-none"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', border: 'none' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--tertiary1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
             >
               Register with Facebook
             </Button> */}

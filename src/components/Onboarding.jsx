@@ -7,7 +7,7 @@ import { WhatsAppOutlined, SendOutlined } from '@ant-design/icons';
 
 // Placeholder image URL - replace with your own
 const sideImage = './onboarding.jpg';
-const logo = './NEXGENU.png'; // <-- replace with your logo file/path
+const logo = './logo.png'; // <-- replace with your logo file/path
 
 // Replace with your actual group links
 const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/KXqYxYvuk1g45maj5caJro?mode=ems_wa_t';
@@ -59,7 +59,7 @@ const Onboarding = () => {
     animate: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.26, ease: 'easeOut' } }
   };
 
-  const glowClass = 'shadow-[0_10px_30px_rgba(43,73,84,0.2)]'; // Updated to use tertiary1 shadow
+  const glowClass = 'shadow-[0_10px_30px_rgba(43,73,84,0.2)]'; // Using tertiary1 for shadow
 
   // Handle logout
   const handleLogout = async () => {
@@ -82,16 +82,16 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="flex min-h-screen pt-20 bg-tertiary1 font-nohemi">
+    <div className="flex min-h-screen pt-20 bg-tertiary1">
       {/* Top header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-primary/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
-        <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
-        <div className="text-lg md:text-xl font-bold text-secondary">NexGen University</div>
+      <header className="fixed top-0 left-0 right-0 h-16 header backdrop-blur z-30 shadow-sm flex items-center px-6">
+        <img src={logo} alt="NexGen University" className="h-32 w-auto" />
+        <div className="text-lg md:text-xl font-bold header-text">NexGen University</div>
         <nav className="ml-auto hidden md:flex items-center gap-4 text-sm">
-          <a href="/onboarding" className="text-secondary hover:text-tertiary2">Onboarding</a>
+          <a href="/onboarding" className="nav-link">Onboarding</a>
           <button 
             onClick={handleLogout} 
-            className="text-secondary hover:text-red-600 transition-colors"
+            className="nav-link hover:text-red-600"
           >
             Log Out
           </button>
@@ -119,7 +119,7 @@ const Onboarding = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="mb-4 text-gray-600"
+            className="mb-4 text-primary"
           >
             Your journey starts soon. Countdown to launch:
           </motion.p>
@@ -129,7 +129,7 @@ const Onboarding = () => {
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.28, duration: 0.45, type: 'spring', stiffness: 140 }}
-            className={`mb-6 p-6 rounded-3xl ${glowClass} bg-gradient-to-br from-primary via-tertiary1 to-tertiary2 text-white ring-1 ring-secondary/30`}
+            className={`mb-6 p-6 rounded-3xl ${glowClass} countdown-card text-white ring-1 ring-secondary-30`}
           >
             <div className="flex items-center justify-center gap-4">
               {(() => {
@@ -141,9 +141,9 @@ const Onboarding = () => {
                       variants={digitVariants}
                       initial="initial"
                       animate="animate"
-                      className="bg-white/10 backdrop-blur-sm border border-secondary/20 rounded-xl min-w-[32px] flex items-center justify-center"
+                      className="bg-white/10 backdrop-blur-sm border border-[rgba(185,251,194,0.2)] rounded-xl min-w-[32px] flex items-center justify-center"
                     >
-                      <span className={`text-4xl md:text-5xl font-nohemi font-bold tracking-tight ${padClass}`}>{value}</span>
+                      <span className={`text-4xl md:text-5xl font-bold tracking-tight ${padClass} text-white`}>{value}</span>
                     </motion.div>
                     <div className="text-[11px] mt-2 uppercase text-secondary/75">{label}</div>
                   </div>
@@ -152,11 +152,11 @@ const Onboarding = () => {
                 return (
                   <>
                     {unit(days, 'Days', 'text-2xl')}
-                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
+                    <div className="text-3xl font-bold text-secondary/90">:</div>
                     {unit(hrs, 'Hours')}
-                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
+                    <div className="text-3xl font-bold text-secondary/90">:</div>
                     {unit(mins, 'Minutes')}
-                    <div className="text-3xl font-nohemi font-bold text-secondary/90">:</div>
+                    <div className="text-3xl font-bold text-secondary/90">:</div>
                     {unit(secs, 'Seconds')}
                   </>
                 );
@@ -170,7 +170,7 @@ const Onboarding = () => {
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.max(0, Math.round(progress * 100))}%` }}
                   transition={{ duration: 0.7, ease: 'easeOut' }}
-                  className="h-2 bg-secondary"
+                  className="h-2 progress-bar"
                 />
               </div>
               <div className="text-xs mt-2 text-secondary/90">{Math.round(progress * 100)}% complete</div>
@@ -182,7 +182,9 @@ const Onboarding = () => {
             <Button
               size="large"
               onClick={handleJoinWhatsApp}
-              className="bg-primary hover:bg-tertiary1 text-white border-none flex items-center justify-center font-nohemi"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', border: 'none' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--tertiary1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
               icon={<WhatsAppOutlined />}
             >
               Join WhatsApp Group
@@ -190,7 +192,9 @@ const Onboarding = () => {
             <Button
               size="large"
               onClick={handleJoinTelegram}
-              className="bg-primary hover:bg-tertiary1 text-white border-none flex items-center justify-center font-nohemi"
+              style={{ backgroundColor: 'var(--primary)', color: '#fff', border: 'none' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--tertiary1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
               icon={<SendOutlined />}
             >
               Join Telegram Group
@@ -206,7 +210,6 @@ const Onboarding = () => {
             <p className="text-primary">Useful Links:</p>
             <ul className="list-disc list-inside">
               <li><a href="#" className="text-tertiary2 hover:text-secondary">Orientation Guide</a></li>
-              <li><a href="#" className="text-tertiary2 hover:text-secondary">Course Catalog</a></li>
               <li><a href="#" className="text-tertiary2 hover:text-secondary">Support Center</a></li>
             </ul>
           </motion.div>
