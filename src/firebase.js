@@ -6,15 +6,12 @@ import {
   signInWithPopup, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
-  sendEmailVerification,
-  signOut
+  sendEmailVerification, 
+  updateProfile,
+  signOut,
+  sendPasswordResetEmail // Added for forgot password
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  serverTimestamp 
-} from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Replace with your actual Firebase config
 const firebaseConfig = {
@@ -27,18 +24,52 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Auth and Firestore
 export const auth = getAuth(app);
+// If your Firestore database is not named '(default)', replace '(default)' with your actual database ID from Firebase Console
+// e.g., export const db = getFirestore(app, 'your-database-name');
+// Otherwise, keep as is
 export const db = getFirestore(app);
-
-// Providers
 export const googleProvider = new GoogleAuthProvider();
 export const facebookProvider = new FacebookAuthProvider();
 
-// Helper: Social login
+// ✅ Email/password login
+export const loginUser = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ✅ Register new user
+export const registerUser = async (email, password, name) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Set display name
+    await updateProfile(user, { displayName: name });
+
+    // Send verification email
+    await sendEmailVerification(user);
+
+    // Save user details in Firestore (optional)
+    await addDoc(collection(db, 'users'), {
+      uid: user.uid,
+      name,
+      email,
+      createdAt: serverTimestamp()
+    });
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ✅ Social login
 export const signInWithSocial = async (provider) => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -48,31 +79,20 @@ export const signInWithSocial = async (provider) => {
   }
 };
 
-// Helper: Email login
-export const loginWithEmail = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Helper: Register with email
-export const registerWithEmail = async (email, password) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCredential.user);
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Helper: Logout
+// ✅ Logout
 export const logout = async () => {
   try {
     await signOut(auth);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ✅ Forgot Password
+export const sendPasswordReset = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return true;
   } catch (error) {
     throw error;
   }

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, message } from 'antd';
 import { auth, logout } from '../firebase'; // ✅ import logout helper
 
+
 // Placeholder image URL - replace with your own
 const sideImage = './onboarding.jpg';
 const logo = './NEXGENU.png'; // <-- replace with your logo file/path

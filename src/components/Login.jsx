@@ -1,92 +1,105 @@
-// components/Login.js 
 import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button, message, Modal } from 'antd';
 import { motion } from 'framer-motion';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { auth, signInWithSocial, googleProvider, facebookProvider } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
+import { loginUser, signInWithSocial, googleProvider, sendPasswordReset } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
 // Placeholder image URL - replace with your own
 const sideImage = './login.jpg';
-const logo = './NEXGENU.png'; // <-- replace with your logo
+const logo = './NEXGENU.png'; // <-- replace with your logo file/path
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // For forgot password modal
+  const [resetEmail, setResetEmail] = useState(''); // For reset email input
+  const [resetLoading, setResetLoading] = useState(false); // For reset button loading
   const navigate = useNavigate();
 
+  // Handle email/password login
   const onFinish = async (values) => {
     setLoading(true);
-
+    setErrorMessage(null);
+    setSuccessMessage(null);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
+      const user = await loginUser(values.email, values.password);
 
       if (!user.emailVerified) {
-        message.warning({
-          content: 'Email not verified. Please check your inbox.',
-          duration: 5,
-        });
+        message.warning('Email not verified. Please check your inbox.');
+        setErrorMessage('Email not verified. Please check your inbox.');
         return;
       }
 
-      message.success({
-        content: 'Login successful!',
-        duration: 5,
-      });
-
-      // Redirect after 5s
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 5000);
+      message.success('Login successful! Redirecting...');
+      setSuccessMessage('Login successful! Redirecting...');
+      setTimeout(() => navigate('/onboarding'), 3000);
 
     } catch (error) {
-      // Handle specific errors
+      console.error('Login error:', error);
       let errorMsg = 'Login failed. Please try again.';
-
-      if (error.code === 'auth/user-not-found') {
-        errorMsg = 'No user found with this email.';
-      } else if (error.code === 'auth/wrong-password') {
-        errorMsg = 'Incorrect password. Please try again.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMsg = 'Invalid email address.';
-      }
-
-      message.error({
-        content: errorMsg,
-        duration: 5,
-      });
+      if (error.code === 'auth/user-not-found') errorMsg = 'No user found with this email.';
+      if (error.code === 'auth/wrong-password') errorMsg = 'Incorrect password. Please try again.';
+      if (error.code === 'auth/invalid-email') errorMsg = 'Invalid email address.';
+      if (error.code === 'auth/invalid-credential') errorMsg = 'Invalid credentials. Check email and password.';
+      message.error(errorMsg);
+      setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
+  // Handle Google login
   const handleSocialLogin = async (provider) => {
     setLoading(true);
+    setErrorMessage(null);
     try {
       const user = await signInWithSocial(provider);
-      message.success({
-        content: `Logged in as ${user.displayName}`,
-        duration: 5,
-      });
-
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 5000);
-
+      message.success(`Welcome ${user.displayName || user.email}`);
+      setTimeout(() => navigate('/onboarding'), 3000);
     } catch (error) {
-      message.error({
-        content: error.message,
-        duration: 5,
-      });
+      console.error('Social login error:', error);
+      const errorMsg = error.message || 'Social login failed.';
+      message.error(errorMsg);
+      setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle Forgot Password
+  const showResetModal = () => {
+    setIsModalOpen(true);
+    setResetEmail('');
+    setErrorMessage(null);
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetEmail) {
+      message.error('Please enter your email address.');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await sendPasswordReset(resetEmail);
+      message.success('Password reset email sent! Please check your inbox.');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      let errorMsg = 'Failed to send password reset email. Please try again.';
+      if (error.code === 'auth/invalid-email') errorMsg = 'Invalid email address.';
+      if (error.code === 'auth/user-not-found') errorMsg = 'No user found with this email.';
+      message.error(errorMsg);
+      setErrorMessage(errorMsg);
+    } finally {
+      setResetLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen pt-20">
-      {/* Top header - brand logo + name */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-white/90 backdrop-blur z-30 shadow-sm flex items-center px-6">
         <img src={logo} alt="NexGen University" className="h-10 w-auto mr-3" />
         <div className="text-lg font-semibold text-slate-900">NexGen University</div>
@@ -94,21 +107,47 @@ const Login = () => {
           <a href="/register" className="text-slate-700 hover:text-blue-600">Register</a>
         </nav>
       </header>
+
+      {/* Form Section */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.8 }}
         className="flex-1 flex items-center justify-center bg-white p-8"
       >
         <div className="w-full max-w-md">
           <motion.h2
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
             className="text-3xl font-bold mb-6 text-center text-gray-800"
           >
             Login to NexGen University
           </motion.h2>
+
+          {/* Error Message Display */}
+          {errorMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-4 text-red-500 text-center bg-red-50 p-3 rounded-md"
+            >
+              {errorMessage}
+            </motion.div>
+          )}
+
+            {/* Success Message Display */}
+            {successMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mb-4 text-green-500 text-center bg-green-50 p-3 rounded-md"
+            >
+              {successMessage}
+            </motion.div>
+          )}
+
           <Form name="login" onFinish={onFinish} layout="vertical">
             <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
               <Input prefix={<UserOutlined />} placeholder="Email" size="large" />
@@ -121,27 +160,66 @@ const Login = () => {
                 Login with Email
               </Button>
             </Form.Item>
+            <Form.Item>
+              <a
+                href="#"
+                className="text-blue-500 hover:underline text-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  showResetModal();
+                }}
+              >
+                Forgot Password?
+              </a>
+            </Form.Item>
           </Form>
+
+          {/* Social logins */}
           <div className="flex flex-col space-y-2 mt-4">
-            <Button onClick={() => handleSocialLogin(googleProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
+            <Button 
+              onClick={() => handleSocialLogin(googleProvider)} 
+              loading={loading} 
+              block 
+              size="large" 
+              icon={<GoogleOutlined />}
+            >
               Login with Google
             </Button>
-            {/* <Button onClick={() => handleSocialLogin(facebookProvider)} loading={loading} block size="large" icon={<UserOutlined />}>
-              Login with Facebook
-            </Button> */}
           </div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.5 }} className="text-center mt-4">
+
+          <motion.p className="text-center mt-4">
             Don't have an account? <a href="/register" className="text-blue-500">Register</a>
           </motion.p>
         </div>
       </motion.div>
-      <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="hidden md:flex flex-1"
+
+      {/* Forgot Password Modal */}
+      <Modal
+        title="Reset Your Password"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" loading={resetLoading} onClick={handleResetPassword}>
+            Send Reset Email
+          </Button>,
+        ]}
       >
-        <img src={sideImage} alt="NexGen University" className="object-cover w-full h-full" loading="lazy" />
+        <p>Enter your email address to receive a password reset link.</p>
+        <Input
+          placeholder="Email"
+          value={resetEmail}
+          onChange={(e) => setResetEmail(e.target.value)}
+          size="large"
+          prefix={<UserOutlined />}
+        />
+      </Modal>
+
+      {/* Image Section */}
+      <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="hidden md:flex flex-1">
+        <img src={sideImage} alt="NexGen University" className="object-cover w-full h-full" />
       </motion.div>
     </div>
   );
