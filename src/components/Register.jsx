@@ -16,6 +16,8 @@ const { Option } = Select;
 const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [verificationMessage, setVerificationMessage] = useState(null);
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -41,7 +43,9 @@ const Register = () => {
       }
 
       message.success('Registration successful! Verification email sent.');
-      navigate('/login'); // direct redirect
+      setVerificationMessage('A verification email has been sent to your email address. Please verify your email before logging in.');
+      setTimeout(() => setVerificationMessage(null), 4000);
+      navigate('/login', 5000); // direct redirect
 
     } catch (error) {
       console.error('Registration error:', error);
@@ -54,6 +58,7 @@ const Register = () => {
         errorMsg = "Invalid email format.";
       }
       message.error(errorMsg);
+      setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -81,6 +86,7 @@ const Register = () => {
     } catch (error) {
       console.error('Social registration error:', error);
       message.error("Social login failed. Please try again.");
+      setErrorMessage("Social login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -112,6 +118,30 @@ const Register = () => {
           >
             Register for NexGen University
           </motion.h2>
+
+          {/* Error Message Display */}
+                    {errorMessage && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-4 text-red-500 text-center bg-red-50 p-3 rounded-md"
+                      >
+                        {errorMessage}
+                      </motion.div>
+                    )}
+
+          {/* Verification Message Display */}
+                    {errorMessage && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-4 text-red-500 text-center bg-red-50 p-3 rounded-md"
+                      >
+                        {verificationMessage}
+                      </motion.div>
+                    )}          
 
           <Form name="register" onFinish={onFinish} layout="vertical">
             <Form.Item name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
