@@ -112,7 +112,7 @@ const Onboarding = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-3xl font-bold mb-6 text-primary"
           >
-            Welcome to Onboarding, {name}!
+            Welcome Onboard, {name}!
           </motion.h2>
 
           <motion.p
@@ -210,7 +210,7 @@ const Onboarding = () => {
             <p className="text-primary">Useful Links:</p>
             <ul className="list-disc list-inside">
               <li><a href="#" className="text-tertiary2 hover:text-secondary">Orientation Guide</a></li>
-              <li><a href="#" className="text-tertiary2 hover:text-secondary">Support Center</a></li>
+              <li><a href="https://wa.link/gg07eb" className="text-tertiary2 hover:text-secondary">Support Center</a></li>
             </ul>
           </motion.div>
         </div>
