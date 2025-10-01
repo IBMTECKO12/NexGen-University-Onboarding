@@ -132,12 +132,12 @@ const Register = () => {
                     )}
 
           {/* Verification Message Display */}
-                    {errorMessage && (
+                    {verificationMessage && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="mb-4 text-red-500 text-center bg-red-50 p-3 rounded-md"
+                        transition={{ duration: 0.5 }}
+                        className="mb-4 text-green-500 text-center bg-green-50 p-3 rounded-md"
                       >
                         {verificationMessage}
                       </motion.div>
@@ -155,9 +155,11 @@ const Register = () => {
             </Form.Item>
             <Form.Item name="program" rules={[{ required: true, message: 'Please select a program!' }]}>
               <Select placeholder="Select Program" size="large" className="text-primary">
-                <Option value="computer-science">Computer Science</Option>
-                <Option value="business">Business Administration</Option>
+                <Option value="design">Design & Visual Creativity</Option>
+                <Option value="business">Entreprenuership & Business</Option>
                 <Option value="engineering">Engineering</Option>
+                <Option value="arts">Creative Arts & Writing</Option>
+                <Option value="content">Digital Media & Content</Option>
               </Select>
             </Form.Item>
             <Form.Item>

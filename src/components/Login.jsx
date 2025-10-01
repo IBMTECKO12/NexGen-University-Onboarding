@@ -12,6 +12,7 @@ const logo = './logo.png'; // <-- replace with your logo file/path
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
@@ -31,6 +32,7 @@ const Login = () => {
       }
 
       message.success('Login successful! Redirecting...');
+      setSuccessMessage('Login successful! Redirecting...');
       setTimeout(() => navigate('/onboarding'), 3000);
 
     } catch (error) {
@@ -130,6 +132,18 @@ const Login = () => {
               className="mb-4 text-red-500 text-center bg-red-50 p-3 rounded-md"
             >
               {errorMessage}
+            </motion.div>
+          )}
+          
+          {/* Success Message Display */}
+          {successMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }} 
+              className="mb-4 text-green-500 text-center bg-green-50 p-3 rounded-md"
+            >
+              {successMessage}
             </motion.div>
           )}
 
